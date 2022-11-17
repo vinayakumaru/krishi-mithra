@@ -36,7 +36,7 @@ class krishi_mithra {
         callback
     ) {
         this.pool.query(
-            `INSERT INTO customer (name, username, password, phone_no, mail_id) VALUES ('${name},${username},${password},${phone_no},${mail_id}')`,
+            `INSERT INTO customer (name, username, password, phone_no, mail_id) VALUES ('${name}','${username}','${password}',${phone_no},'${mail_id}')`,
             (err, result) => {
                 if (err) {
                     console.log(err.sqlMessage);
@@ -132,7 +132,7 @@ class krishi_mithra {
 
     getProductsbyCategory(category,callback){
         this.pool.query(
-            `select * from product where category = ${category}`,
+            `select * from product where category = '${category}'`,
             (err,result)=>{
                 if (err){
                     console.log(err);

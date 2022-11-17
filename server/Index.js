@@ -14,7 +14,7 @@ app.post("/api/userRegister", (req, res) => {
         if (status) {
             res.send("success");
         } else {
-            res.send("failure");
+            res.status(400).send("failure");
         }
     });
 });
@@ -38,7 +38,7 @@ app.post("/api/sellerRegister",(req, res) => {
             res.send("success");
         }
         else{
-            res.send("failure");
+            res.status(400).send("failure");
         }
     });
 });
