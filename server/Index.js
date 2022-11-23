@@ -22,6 +22,26 @@ app.post("/api/userRegister", (req, res) => {
 app.post("/api/userLogin", (req, res) => {
     krishi_mithra_database_instance.checkUser(req.body, (status) => {
         if (status) {
+            res.send("success");
+        } else {
+            res.status(400).send("invalid credentials");
+        }
+    });
+});
+
+app.post("/api/sellerRegister", (req, res) => {
+    krishi_mithra_database_instance.sellerRegister(req.body, (status) => {
+        if (status) {
+            res.send("success");
+        } else {
+            res.status(400).send("failure");
+        }
+    });
+});
+
+app.post("/api/sellerLogin", (req, res) => {
+    krishi_mithra_database_instance.checkSeller(req.body, (status) => {
+        if (status) {
             res.send({
                 username: req.body.username,
                 password: req.body.password,
@@ -32,58 +52,51 @@ app.post("/api/userLogin", (req, res) => {
     });
 });
 
-app.post("/api/sellerRegister",(req, res) => {
-    krishi_mithra_database_instance.sellerRegister(req.body, (status)=> {
-        if(status) {
-            res.send("success");
+app.get("/api/products", (_, res) => {
+    krishi_mithra_database_instance.getProducts((err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(400).send(err.message);
+            return;
         }
-        else{
-            res.status(400).send("failure");
+        res.send(result);
+    });
+});
+
+app.post("/api/getProductsByCategory", (req, res) => {
+    krishi_mithra_database_instance.getProductsbyCategory(
+        req.body,
+        (err, result) => {
+            if (err) {
+                console.log(err);
+                res.status(400).send(err.message);
+                return;
+            }
+            res.send(result);
+        }
+    );
+});
+
+app.post("/api/getProductById", (req, res) => {
+    krishi_mithra_database_instance.getProductById(req.body, (err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(400).send(err.message);
+            return;
+        }
+        res.send(result[0]);
+    });
+});
+
+app.post("api/cart", (req, res) => {
+    krishi_mithra_database_instance.addToCart(req.body, (status) => {
+        if (status) {
+            res.send({});
         }
     });
 });
 
-app.post("/api/sellerLogin",(req,res) => {
-    krishi_mithra_database_instance.checkSeller(req.body,(status)=> {
-        if(status) {
-            res.send({
-                username: req.body.username,
-                password: req.body.password,
-            });
-        }
-        else{
-            res.send({username: "", password: "" })
-        }
-    })
-})
-
-app.post("/api/products",(res)=>{
-    krishi_mithra_database_instance.getProducts((status)=> {
-        if(status) {
-            res.send({})
-        }
-    })
-})
-
-app.post("/api/getProductsByCategory",(req,res)=>{
-    krishi_mithra_database_instance.getProductsbyCategory(req.body ,(status)=> {
-        if (status) {
-            res.send({})
-        }
-    })
-})
-
-app.post("api/cart",(req,res)=>{
-    krishi_mithra_database_instance.addToCart(req.body , (status) =>{
-        if (status){
-            res.send({})
-        }
-    })
-})
-
-
-
 app.listen(port, () => {
-    console.log(`Listening on port ${port}`)
+    console.log(`Listening on port ${port}`);
     krishi_mithra_database_instance.connect();
 });

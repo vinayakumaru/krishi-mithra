@@ -1,6 +1,15 @@
+const mysql = require("mysql");
+
+pool = mysql.createPool({
+  connectionLimit: 10,
+  host: "localhost",
+  user: "root",
+  database: "krishi_mithra",
+});
+
 const product_data = [
   {
-    "product_id": "INS101",
+    "product_ID": "INS101",
     "product_name": "flash",
     "category": "Insectiside",
     "manufacturer": "Syngenta",
@@ -9,11 +18,11 @@ const product_data = [
     "product_des": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatibus nobis, temporibus",
     "price": 2200,
     "avl_qty": 40,
-    "seller_id": "29KARTL2001",
+    "seller_ID": "29KARTL2001",
     "image":"Flash.jpg",
   },
   {
-    "product_id": "INS102",
+    "product_ID": "INS102",
     "product_name": "Celcron",
     "category": "Insectiside",
     "manufacturer": "Syngenta",
@@ -22,11 +31,11 @@ const product_data = [
     "product_des": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatibus nobis, temporibus ipsam quo ullam repellendus",
     "price": 2000,
     "avl_qty": 40,
-    "seller_id": "29KAWHO3002",
+    "seller_ID": "29KAWHO3002",
     "image":"Celcron.jpg",
   },
   {
-    "product_id": "INS103",
+    "product_ID": "INS103",
     "product_name": "Celquin",
     "category": "Insectiside",
     "manufacturer": "Bayer Crop science",
@@ -35,11 +44,11 @@ const product_data = [
     "product_des": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatibus nobis, temporibus ipsam quo ullam repellendus",
     "price": 1899,
     "avl_qty": 25,
-    "seller_id": "30KLRTL6003",
+    "seller_ID": "30KLRTL6003",
     "image":"Celquin.jpg",
   },
   {
-    "product_id": "INS104",
+    "product_ID": "INS104",
     "product_name": "Deltex",
     "category": "Insectiside",
     "manufacturer": "BASF",
@@ -48,11 +57,11 @@ const product_data = [
     "product_des": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatibus nobis, temporibus ipsam quo ullam repellendus",
     "price": 2000,
     "avl_qty": 25,
-    "seller_id": "29TLRTL5009",
+    "seller_ID": "29TLRTL5009",
     "image":"Deltex.jpg",
   },
   {
-    "product_id": "INS105",
+    "product_ID": "INS105",
     "product_name": "Excel Acetcel",
     "category": "Insectiside",
     "manufacturer": "UPL",
@@ -61,11 +70,11 @@ const product_data = [
     "product_des": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatibus nobis, temporibus ipsam quo ullam repellendus",
     "price": 1799,
     "avl_qty": 70,
-    "seller_id": "28MHWHO9004",
+    "seller_ID": "28MHWHO9004",
     "image":"Excel_acetcel.jpg",
   },
   {
-    "product_id": "FUN201",
+    "product_ID": "FUN201",
     "product_name": "Caviet",
     "category": "Fungicide",
     "manufacturer": "Syngenta",
@@ -74,11 +83,11 @@ const product_data = [
     "product_des": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatibus nobis, temporibus ipsam quo ullam repellendus",
     "price": 1899,
     "avl_qty": 30,
-    "seller_id": "29KARTL2001",
+    "seller_ID": "29KARTL2001",
     "image":"Caviet.jpg",
   },
   {
-    "product_id": "FUN202",
+    "product_ID": "FUN202",
     "product_name": "Dimension EC",
     "category": "Fungicide",
     "manufacturer": "Bayer Crop science",
@@ -87,11 +96,11 @@ const product_data = [
     "product_des": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatibus nobis, temporibus ipsam quo ullam repellendus",
     "price": 1700,
     "avl_qty": 20,
-    "seller_id": "27TNWHO5007",
+    "seller_ID": "27TNWHO5007",
     "image":"Dimension_EC.jpg",
   },
   {
-    "product_id": "FUN203",
+    "product_ID": "FUN203",
     "product_name": "Hexzol Gold",
     "category": "Fungicide",
     "manufacturer": "UPL",
@@ -100,11 +109,11 @@ const product_data = [
     "product_des": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatibus nobis, temporibus ipsam quo ullam repellendus",
     "price": 1600,
     "avl_qty": 20,
-    "seller_id": "28MHWHO9004",
+    "seller_ID": "28MHWHO9004",
     "image":"Hexzol_Gold.jpg",
   },
   {
-    "product_id": "FUN204",
+    "product_ID": "FUN204",
     "product_name": "Sulfex",
     "category": "Fungicide",
     "manufacturer": "Dow Agrisciences",
@@ -113,11 +122,11 @@ const product_data = [
     "product_des": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatibus nobis, temporibus ipsam quo ullam repellendus",
     "price": 1659,
     "avl_qty": 30,
-    "seller_id": "28MHWHO9004",
+    "seller_ID": "28MHWHO9004",
     "image":"Sulfex.jpg",
   },
   {
-    "product_id": "FUN205",
+    "product_ID": "FUN205",
     "product_name": "Swadheen",
     "category": "Fungicide",
     "manufacturer": "Syngenta",
@@ -126,11 +135,11 @@ const product_data = [
     "product_des": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatibus nobis, temporibus ipsam quo ullam repellendus",
     "price": 1500,
     "avl_qty": 80,
-    "seller_id": "29KAWHO3002",
+    "seller_ID": "29KAWHO3002",
     "image":"Swadheen.jpg",
   },
   {
-    "product_id": "HER301",
+    "product_ID": "HER301",
     "product_name": "Casanova",
     "category": "Herbicide",
     "manufacturer": "Bayer Crop science",
@@ -139,11 +148,11 @@ const product_data = [
     "product_des": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatibus nobis, temporibus ipsam quo ullam repellendus",
     "price": 2300,
     "avl_qty": 30,
-    "seller_id": "27TNWHO5007",
+    "seller_ID": "27TNWHO5007",
     "image":"Casanova.jpg",
   },
   {
-    "product_id": "HER302",
+    "product_ID": "HER302",
     "product_name": "D Cel",
     "category": "Herbicide",
     "manufacturer": "UPL",
@@ -152,11 +161,11 @@ const product_data = [
     "product_des": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatibus nobis, temporibus ipsam quo ullam repellendus",
     "price": 2200,
     "avl_qty": 30,
-    "seller_id": "28MHWHO9004",
+    "seller_ID": "28MHWHO9004",
     "image":"D_Cel.jpg",
   },
   {
-    "product_id": "HER303",
+    "product_ID": "HER303",
     "product_name": "Excel Mera 71",
     "category": "Herbicide",
     "manufacturer": "ADAMA",
@@ -165,11 +174,11 @@ const product_data = [
     "product_des": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatibus nobis, temporibus ipsam quo ullam repellendus",
     "price": 1800,
     "avl_qty": 40,
-    "seller_id": "25RJWHO7000",
+    "seller_ID": "25RJWHO7000",
     "image":"Excel_Mera_71.jpg",
   },
   {
-    "product_id": "HER304",
+    "product_ID": "HER304",
     "product_name": "Glycel",
     "category": "Herbicide",
     "manufacturer": "ADAMA",
@@ -178,11 +187,11 @@ const product_data = [
     "product_des": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatibus nobis, temporibus ipsam quo ullam repellendus",
     "price": 1999,
     "avl_qty": 40,
-    "seller_id": "25RJWHO7000",
+    "seller_ID": "25RJWHO7000",
     "image":"Glycel.jpg",
   },
   {
-    "product_id": "HER305",
+    "product_ID": "HER305",
     "product_name": "Junoon",
     "category": "Herbicide",
     "manufacturer": "Sumitomo Chemical",
@@ -191,11 +200,11 @@ const product_data = [
     "product_des": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatibus nobis, temporibus ipsam quo ullam repellendus",
     "price": 1900,
     "avl_qty": 10,
-    "seller_id": "20HRWHO6002",
+    "seller_ID": "20HRWHO6002",
     "image":"Junoon.jpg",
   },
   {
-    "product_id": "ST401",
+    "product_ID": "ST401",
     "product_name": "Seedcel",
     "category": "Seed Treatment",
     "manufacturer": "Syngenta",
@@ -204,11 +213,11 @@ const product_data = [
     "product_des": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatibus nobis, temporibus ipsam quo ullam repellendus",
     "price": 2799,
     "avl_qty": 25,
-    "seller_id": "29KARTL2001",
+    "seller_ID": "29KARTL2001",
     "image":"Seedcel.jpg",
   },
   {
-    "product_id": "ST402",
+    "product_ID": "ST402",
     "product_name": "Seedex",
     "category": "Seed Treatment",
     "manufacturer": "Syngenta",
@@ -217,11 +226,11 @@ const product_data = [
     "product_des": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatibus nobis, temporibus ipsam quo ullam repellendus",
     "price": 2550,
     "avl_qty": 25,
-    "seller_id": "29KARTL2001",
+    "seller_ID": "29KARTL2001",
     "image":"Seedex.jpg",
   },
   {
-    "product_id": "ST403",
+    "product_ID": "ST403",
     "product_name": "Vitavax-200",
     "category": "Seed Treatment",
     "manufacturer": "Bayer Crop science",
@@ -230,11 +239,11 @@ const product_data = [
     "product_des": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatibus nobis, temporibus ipsam quo ullam repellendus",
     "price": 1900,
     "avl_qty": 30,
-    "seller_id": "27TNWHO5007",
+    "seller_ID": "27TNWHO5007",
     "image":"Vitavax_200.jpg",
   },
   {
-    "product_id": "ST404",
+    "product_ID": "ST404",
     "product_name": "Stiletto",
     "category": "Seed Treatment",
     "manufacturer": "UPL",
@@ -243,11 +252,11 @@ const product_data = [
     "product_des": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatibus nobis, temporibus ipsam quo ullam repellendus",
     "price": 2300,
     "avl_qty": 30,
-    "seller_id": "28MHWHO9004",
+    "seller_ID": "28MHWHO9004",
     "image":"Stiletto.jpg",
   },
   {
-    "product_id": "ST405",
+    "product_ID": "ST405",
     "product_name": "Maxim 4FS",
     "category": "Seed Treatment",
     "manufacturer": "Valent",
@@ -256,9 +265,17 @@ const product_data = [
     "product_des": "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatibus nobis, temporibus ipsam quo ullam repellendus",
     "price": 1899,
     "avl_qty": 30,
-    "seller_id": "27MPWHO8007",
+    "seller_ID": "27MPWHO8007",
     "image":"Maxim_4FS.jpg",
   }
 ]
 
-export default product_data;
+//insert into database
+for (var i = 0; i < product_data.length; i++) {
+  pool.query('Insert into product set ?', product_data[i], function (error, results) {
+    if (error) throw error;
+    console.log('The solution is: ', results);
+  });
+}
+
+// export default product_data;

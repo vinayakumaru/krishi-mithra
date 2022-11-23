@@ -41,7 +41,7 @@ const Navbar = () => {
                                 removeUserFromCache();
                                 setIsUserLoggedIn(false);
                             }}
-                        ><i className="fa fa-user-plus mr-1"></i> Logout</NavLink> : null}
+                        ><i className="fa-solid fa-right-from-bracket"></i> Logout</NavLink> : null}
                     </div>
                 </div>
             </div>

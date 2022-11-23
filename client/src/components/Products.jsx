@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";  
+import { useDispatch } from "react-redux";
 import { addCart } from "../redux/action";
 import storage from "../firebase-config"
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import product_data from "../data/data.js";
-
 import { Link } from "react-router-dom";
 import { ref, getDownloadURL } from "firebase/storage";
+import axios from "axios";
 
 const ImageFirebase = ({ imageName }) => {
-  const [imageURL, setimageURL] = useState('');
+  const [imageURL, setimageURL] = useState(null);
   useEffect(() => {
     getDownloadURL(ref(storage, `images/${imageName}`))
       .then((url) => {
@@ -19,15 +18,25 @@ const ImageFirebase = ({ imageName }) => {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [imageName]);
 
   return (
-    <img
-      className="card-img-top p-3"
-      src={imageURL}
-      alt="Card"
-      height={300}
-    />
+    <>
+      {
+        imageURL ?
+          <img
+            className="card-img-top p-3"
+            src={imageURL}
+            alt="Card"
+            height={300}
+          /> :
+          <div className="col-md-4 col-sm-6 col-xs-8 col-12 mb-4 mt-2" >
+            <Skeleton height={300} width={265} />
+          </div >
+
+      }
+    </>
+
   );
 }
 
@@ -36,7 +45,6 @@ const Products = () => {
   const [data, setData] = useState([]);
   const [filter, setFilter] = useState(data);
   const [loading, setLoading] = useState(false);
-  let componentMounted = true;
 
   const dispatch = useDispatch();
 
@@ -45,25 +53,19 @@ const Products = () => {
   }
 
   useEffect(() => {
-    const getProducts = async () => {
-      setLoading(true);
-      // const response = await fetch("https://fakestoreapi.com/products/");
-      // if (componentMounted) {
-      //   setData(await response.clone().json());
-      //   setFilter(await response.json());
-      //   setLoading(false);
-      // }
-      if (componentMounted) {
-        setData(product_data);
-        setFilter(product_data);
+    setLoading(true);
+    axios.get(process.env.REACT_APP_SERVER_URL + "/api/products")
+      .then((response) => {
+        console.log(response.data);
+        setData(response.data);
+        setFilter(response.data);
         setLoading(false);
-      }
-    };
-    getProducts();
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+      });
 
-    return () => {
-      componentMounted = false;
-    };
   }, []);
 
   const Loading = () => {
@@ -103,32 +105,33 @@ const Products = () => {
       <>
         <div className="buttons text-center py-5">
           <button className="btn btn-outline-dark btn-sm m-2" onClick={() => setFilter(data)}>All</button>
-          <button className="btn btn-outline-dark btn-sm m-2" onClick={() => filterProduct("men's clothing")}>Men's Clothing</button>
-          <button className="btn btn-outline-dark btn-sm m-2" onClick={() => filterProduct("women's clothing")}>
-            Women's Clothing
-          </button>
-          <button className="btn btn-outline-dark btn-sm m-2" onClick={() => filterProduct("jewelery")}>Jewelery</button>
-          <button className="btn btn-outline-dark btn-sm m-2" onClick={() => filterProduct("electronics")}>Electronics</button>
+          <button className="btn btn-outline-dark btn-sm m-2" onClick={() => filterProduct("Insectiside")}>Insectiside</button>
+          <button className="btn btn-outline-dark btn-sm m-2" onClick={() => filterProduct("Fungicide")}>Fungicide</button>
+          <button className="btn btn-outline-dark btn-sm m-2" onClick={() => filterProduct("Herbicide")}>Herbicide</button>
+          <button className="btn btn-outline-dark btn-sm m-2" onClick={() => filterProduct("Seed Treatment")}>Seed Treatment</button>
         </div>
 
-        {filter.map((product) => {
+        {filter.map((product,index) => {
           return (
-            <div id={product.product_ID} key={product.product_ID} className="col-md-4 col-sm-6 col-xs-8 col-12 mb-4">
-              <div className="card text-center h-100" key={product.product_ID}>
+            <div id={product.product_id} key={index} className="col-md-4 col-sm-6 col-xs-8 col-12 mb-4">
+              <div className="card text-center h-100" key={product.product_id}>
                 <ImageFirebase imageName={product.image} />
                 <div className="card-body">
                   <h5 className="card-title">
-                    {product.product_name.substring(0, 12)}...
+                    {product.product_name.lenght
+                      ? product.product_name.substring(0, 15) + "..."
+                      : product.product_name
+                    }
                   </h5>
                   <p className="card-text">
                     {product.product_des.substring(0, 90)}...
                   </p>
                 </div>
                 <ul className="list-group list-group-flush">
-                  <li className="list-group-item lead">₹ {product.price}</li>
+                  <li key={"price"} className="list-group-item lead">₹ {product.price}</li>
                 </ul>
                 <div className="card-body">
-                  <Link to={"/product/" + product.product_ID} className="btn btn-dark m-1">
+                  <Link to={"/product/" + product.product_id} className="btn btn-dark m-1">
                     Buy Now
                   </Link>
                   <button className="btn btn-dark m-1" onClick={() => addProduct(product)}>
