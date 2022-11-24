@@ -13,3 +13,16 @@ export const delCart = (product) =>{
         payload:product
     }
 }
+
+export const setCart = (cart) =>{
+    return {
+        type:"SETCART",
+        payload:cart
+    }
+}
+
+export const clearCart = () =>{
+    return {
+        type:"CLEARCART",
+    }
+}

@@ -87,7 +87,7 @@ function setupOrderTable() {
 
 function setupCartTable(){
     pool.query(
-        "create table if not exists cart (p_id int,product_name varchar(50),qty int,price_per_peice float,total_amount float)",
+        "create table if not exists cart (cart_id int AUTO_INCREMENT PRIMARY KEY,product_id varchar(20),username varchar(20),qty int)",
         (err,result) => {
             if (err) throw err;
             console.log("Cart table created");

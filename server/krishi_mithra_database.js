@@ -31,7 +31,6 @@ class krishi_mithra {
                     callback(false);
                     return;
                 }
-                console.log("successfully registered");
                 callback(true);
             }
         );
@@ -113,21 +112,16 @@ class krishi_mithra {
         this.pool.query(`select * from product where product_id = '${product_id}'`,callback);
     }
 
-    addToCart({ username, p_id, qty }, callback) {
-        this.pool.query(
-            `INSERT INTO cart (p_id,product_name,price_per_peice) SELECT p.product_id,p.product_name,p.price  from product as p`,
-            (err, result) => {
-                if (err) {
-                    console.log(err);
-                    callback([]);
-                    return;
-                } else {
-                    this.pool.query(
-                        `INSERT into cart(qty,total_amount,username) VALUES (${qty}, (qty * price_per_peice),${username} ) WHERE p_id = ${p_id}`
-                    );
-                }
-            }
-        );
+    getCart({username},callback){
+        this.pool.query(`select product.product_id,product_name,category,manufacturer,manufacture_date,exp_date,product_des,price,avl_qty,seller_id,image,qty from cart join product on cart.product_id = product.product_id where username = '${username}'`,callback);
+    }
+
+    updateCart({product_id,username,qty},callback){
+        this.pool.query(`REPLACE INTO cart (product_id, username, qty) VALUES ('${product_id}','${username}',${qty})`,callback);
+    }
+
+    deleteFromCart({product_id,username},callback){
+        this.pool.query(`delete from cart where product_id = '${product_id}' and username = '${username}'`,callback);
     }
 }
 

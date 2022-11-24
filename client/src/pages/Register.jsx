@@ -22,7 +22,7 @@ const Register = () => {
             mail_id: email,
         };
         axios
-            .post("http://localhost:4000/api/userRegister", registered)
+            .post(process.env.REACT_APP_SERVER_URL + "/api/userRegister", registered)
             .then((response) => {
                 console.log(response.data);
                 setusername("");

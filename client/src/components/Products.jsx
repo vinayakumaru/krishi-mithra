@@ -56,7 +56,6 @@ const Products = () => {
     setLoading(true);
     axios.get(process.env.REACT_APP_SERVER_URL + "/api/products")
       .then((response) => {
-        console.log(response.data);
         setData(response.data);
         setFilter(response.data);
         setLoading(false);

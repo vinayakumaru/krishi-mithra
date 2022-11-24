@@ -3,9 +3,12 @@ import { NavLink } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import getUserFromCache from "../utils/getUserFromCache";
 import removeUserFromCache from "../utils/removeUserFromCache";
+import { useDispatch } from "react-redux";
+import { clearCart } from "../redux/action";
 
 
 const Navbar = () => {
+    const dispatch = useDispatch();
     const state = useSelector(state => state.handleCart)
     const [isUserLoggedIn, setIsUserLoggedIn] = useState(getUserFromCache() ? true : false);
     return (
@@ -40,6 +43,7 @@ const Navbar = () => {
                             onClick={() => {
                                 removeUserFromCache();
                                 setIsUserLoggedIn(false);
+                                dispatch(clearCart());
                             }}
                         ><i className="fa-solid fa-right-from-bracket"></i> Logout</NavLink> : null}
                     </div>

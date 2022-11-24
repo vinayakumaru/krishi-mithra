@@ -88,11 +88,36 @@ app.post("/api/getProductById", (req, res) => {
     });
 });
 
-app.post("api/cart", (req, res) => {
-    krishi_mithra_database_instance.addToCart(req.body, (status) => {
-        if (status) {
-            res.send({});
+app.post('/api/getCart', (req, res) => {
+    krishi_mithra_database_instance.getCart(req.body, (err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(400).send(err.message);
+            return;
         }
+        res.send(result);
+    });
+});
+
+app.post("/api/updateCart", (req, res) => {
+    krishi_mithra_database_instance.updateCart(req.body, (err,_) => {
+        if(err){
+            console.log(err);
+            res.status(400).send(err.message);
+            return;
+        }
+        res.send("Updated cart successfully");
+    });
+});
+
+app.post("/api/deleteFromCart", (req, res) => {
+    krishi_mithra_database_instance.deleteFromCart(req.body, (err,_) => {
+        if(err){
+            console.log(err);
+            res.status(400).send(err.message);
+            return;
+        }
+        res.send("Deleted from cart successfully");
     });
 });
 

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Footer, Navbar } from "../components";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
+import axios from "axios";
 
 const Login = () => {
     const navigate = new useNavigate();
@@ -13,7 +13,7 @@ const Login = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         axios
-            .post("http://localhost:4000/api/userLogin", { username, password })
+            .post(process.env.REACT_APP_SERVER_URL + "/api/userLogin", { username, password })
             .then((_) => {
                 const token = new Cookies();
                 token.set("username", username, {
