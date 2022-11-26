@@ -9,13 +9,17 @@ import getUserFromCache from "./utils/getUserFromCache";
 import { useDispatch } from "react-redux";
 import { setCart } from "./redux/action";
 import axios from "axios";
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
 
 import {
     Home,
     Product,
     Products,
     AboutPage,
-    ContactPage,
+    OrdersPage,
     Cart,
     Login,
     Register,
@@ -47,7 +51,7 @@ function App() {
                 <Route path="/product" element={<Products />} />
                 <Route path="/product/:id" element={<Product />} />
                 <Route path="/about" element={<AboutPage />} />
-                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/orders" element={<OrdersPage />} />
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />

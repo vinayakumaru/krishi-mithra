@@ -1,10 +1,16 @@
 import React from "react";
-import { Footer, Navbar } from "../components";
+import { Navbar } from "../components";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import state_list from "../utils/stateList";
+import PaymentDialog from "../components/PaymentDialog";
+import PaymentSuccessDialog from "../components/PaymentSuccessDialog";
+import axios from "axios";
+import getUserFromCache from "../utils/getUserFromCache";
+
 const Checkout = () => {
   const state = useSelector((state) => state.handleCart);
-
+  
   const EmptyCart = () => {
     return (
       <div className="container">
@@ -21,6 +27,18 @@ const Checkout = () => {
   };
 
   const ShowCheckout = () => {
+    const [Name, setName] = React.useState("");
+    const [PhoneNumber, setPhoneNumber] = React.useState("");
+    const [Address, setAddress] = React.useState("");
+    const [City, setCity] = React.useState("");
+    const [StateAddress, setStateAddress] = React.useState("Karnataka");
+    const [Pincode, setPincode] = React.useState("");
+    const [PaymentMethod, setPaymentMethod] = React.useState("UPI");
+    const [UpiID, setUpiID] = React.useState("");
+    const [open, setOpen] = React.useState(false);
+    const [openSuccess, setOpenSuccess] = React.useState(false);
+    const [transactionId, setTransactionId] = React.useState("3445534");
+
     let subtotal = 0;
     let shipping = 30.0;
     let totalItems = 0;
@@ -31,9 +49,26 @@ const Checkout = () => {
     state.map((item) => {
       return (totalItems += item.qty);
     });
+
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      setOpen(true);
+      axios.post(process.env.REACT_APP_SERVER_URL + "/api/checkout", {username: getUserFromCache(),Name, PhoneNumber, Address, City, StateAddress, Pincode, PaymentMethod,amount: Math.round(subtotal + shipping)})
+        .then(res => {
+          setTimeout(() => {
+            setOpen(false);
+            setTransactionId(res.data);
+            setOpenSuccess(true);
+          }, 5000);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    };
+
     return (
       <>
-        <div className="container py-5">
+        <div className="container pt-5">
           <div className="row my-4">
             <div className="col-md-5 col-lg-4 order-md-last">
               <div className="card mb-4">
@@ -43,18 +78,18 @@ const Checkout = () => {
                 <div className="card-body">
                   <ul className="list-group list-group-flush">
                     <li className="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-                      Products ({totalItems})<span>${Math.round(subtotal)}</span>
+                      Products ({totalItems})<span>₹{Math.round(subtotal)}</span>
                     </li>
                     <li className="list-group-item d-flex justify-content-between align-items-center px-0">
                       Shipping
-                      <span>${shipping}</span>
+                      <span>₹{shipping}</span>
                     </li>
                     <li className="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
                       <div>
                         <strong>Total amount</strong>
                       </div>
                       <span>
-                        <strong>${Math.round(subtotal + shipping)}</strong>
+                        <strong>₹{Math.round(subtotal + shipping)}</strong>
                       </span>
                     </li>
                   </ul>
@@ -67,68 +102,55 @@ const Checkout = () => {
                   <h4 className="mb-0">Billing address</h4>
                 </div>
                 <div className="card-body">
-                  <form className="needs-validation" novalidate>
+                  <form className="form" onSubmit={handleSubmit}>
                     <div className="row g-3">
                       <div className="col-sm-6 my-1">
-                        <label for="firstName" className="form-label">
-                          First name
+                        <label htmlFor="Name" className="form-label">
+                          Name
                         </label>
                         <input
                           type="text"
                           className="form-control"
-                          id="firstName"
-                          placeholder=""
-                          value=""
+                          id="Name"
+                          placeholder="Harry Potter"
+                          value={Name}
+                          onChange={(e) => setName(e.target.value)}
                           required
                         />
                         <div className="invalid-feedback">
-                          Valid first name is required.
+                          Valid name is required.
                         </div>
                       </div>
 
                       <div className="col-sm-6 my-1">
-                        <label for="lastName" className="form-label">
-                          Last name
+                        <label htmlFor="number" className="form-label">
+                          Phone number
                         </label>
                         <input
-                          type="text"
+                          type="number"
                           className="form-control"
-                          id="lastName"
-                          placeholder=""
-                          value=""
+                          id="number"
+                          value={PhoneNumber}
+                          onChange={(e) => setPhoneNumber(e.target.value)}
+                          placeholder="99########"
                           required
                         />
                         <div className="invalid-feedback">
-                          Valid last name is required.
+                          Please enter a valid phone number.
                         </div>
                       </div>
 
                       <div className="col-12 my-1">
-                        <label for="email" className="form-label">
-                          Email
-                        </label>
-                        <input
-                          type="email"
-                          className="form-control"
-                          id="email"
-                          placeholder="you@example.com"
-                          required
-                        />
-                        <div className="invalid-feedback">
-                          Please enter a valid email address for shipping
-                          updates.
-                        </div>
-                      </div>
-
-                      <div className="col-12 my-1">
-                        <label for="address" className="form-label">
+                        <label htmlFor="address" className="form-label">
                           Address
                         </label>
                         <input
                           type="text"
                           className="form-control"
                           id="address"
-                          placeholder="1234 Main St"
+                          placeholder="Banashankari 3rd Stage"
+                          value={Address}
+                          onChange={(e) => setAddress(e.target.value)}
                           required
                         />
                         <div className="invalid-feedback">
@@ -136,60 +158,58 @@ const Checkout = () => {
                         </div>
                       </div>
 
-                      <div className="col-12">
-                        <label for="address2" className="form-label">
-                          Address 2{" "}
-                          <span className="text-muted">(Optional)</span>
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="address2"
-                          placeholder="Apartment or suite"
-                        />
-                      </div>
-
-                      <div className="col-md-5 my-1">
-                        <label for="country" className="form-label">
-                          Country
-                        </label>
-                        <br />
-                        <select className="form-select" id="country" required>
-                          <option value="">Choose...</option>
-                          <option>India</option>
-                        </select>
-                        <div className="invalid-feedback">
-                          Please select a valid country.
-                        </div>
-                      </div>
-
                       <div className="col-md-4 my-1">
-                        <label for="state" className="form-label">
-                          State
-                        </label>
-                        <br />
-                        <select className="form-select" id="state" required>
-                          <option value="">Choose...</option>
-                          <option>Punjab</option>
-                        </select>
-                        <div className="invalid-feedback">
-                          Please provide a valid state.
-                        </div>
-                      </div>
-
-                      <div className="col-md-3 my-1">
-                        <label for="zip" className="form-label">
-                          Zip
+                        <label htmlFor="city" className="form-label">
+                          City
                         </label>
                         <input
                           type="text"
                           className="form-control"
-                          id="zip"
-                          placeholder=""
+                          id="city"
+                          placeholder="Banashankari"
+                          value={City}
+                          onChange={(e) => setCity(e.target.value)}
                           required
                         />
                         <div className="invalid-feedback">
-                          Zip code required.
+                          City required.
+                        </div>
+                      </div>
+                      <div className="col-md-5 my-1">
+                        <label htmlFor="state" className="form-label">
+                          State
+                        </label>
+                        <select
+                          className="form-select"
+                          id="state"
+                          value={StateAddress}
+                          onChange={(e) => setStateAddress(e.target.value)}
+                        >
+                          {state_list.map((item, index) => {
+                            return (
+                              <option key={index} value={item}>
+                                {item}
+                              </option>
+                            );
+                          })}
+                        </select>
+                      </div>
+
+                      <div className="col-md-3 my-1">
+                        <label htmlFor="pincode" className="form-label">
+                          Pincode
+                        </label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          id="pincode"
+                          placeholder="56####"
+                          value={Pincode}
+                          onChange={(e) => setPincode(e.target.value)}
+                          required
+                        />
+                        <div className="invalid-feedback">
+                          Pincode required.
                         </div>
                       </div>
                     </div>
@@ -197,81 +217,47 @@ const Checkout = () => {
                     <hr className="my-4" />
 
                     <h4 className="mb-3">Payment</h4>
-
-                    <div className="row gy-3">
-                      <div className="col-md-6">
-                        <label for="cc-name" className="form-label">
-                          Name on card
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="cc-name"
-                          placeholder=""
-                          required
-                        />
-                        <small className="text-muted">
-                          Full name as displayed on card
-                        </small>
-                        <div className="invalid-feedback">
-                          Name on card is required
-                        </div>
+                    <div className="row gy-3 py-3">
+                      <div className="col-md-5 my-1">
+                        <select
+                          className="form-select"
+                          id="paymentMethod"
+                          value={PaymentMethod}
+                          onChange={(e) => {
+                            setPaymentMethod(e.target.value)
+                            setUpiID("")
+                          }}
+                        >
+                          <option value={"UPI"}>UPI</option>
+                          <option value={"CASH"}>CASH</option>
+                        </select>
                       </div>
-
-                      <div className="col-md-6">
-                        <label for="cc-number" className="form-label">
-                          Credit card number
-                        </label>
+                      <div className="col-md-6 my-1"
+                        style={{
+                          display: PaymentMethod === "UPI" ? "unset" : "none",
+                        }}
+                      >
                         <input
                           type="text"
                           className="form-control"
-                          id="cc-number"
-                          placeholder=""
+                          id="UPI"
+                          placeholder="99######89@paytm"
+                          value={UpiID}
+                          onChange={(e) => setUpiID(e.target.value)}
                           required
                         />
                         <div className="invalid-feedback">
-                          Credit card number is required
-                        </div>
-                      </div>
-
-                      <div className="col-md-3">
-                        <label for="cc-expiration" className="form-label">
-                          Expiration
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="cc-expiration"
-                          placeholder=""
-                          required
-                        />
-                        <div className="invalid-feedback">
-                          Expiration date required
-                        </div>
-                      </div>
-
-                      <div className="col-md-3">
-                        <label for="cc-cvv" className="form-label">
-                          CVV
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="cc-cvv"
-                          placeholder=""
-                          required
-                        />
-                        <div className="invalid-feedback">
-                          Security code required
+                          UPI ID required.
                         </div>
                       </div>
                     </div>
 
+
                     <hr className="my-4" />
 
                     <button
-                      className="w-100 btn btn-primary "
-                      type="submit" disabled
+                      className="w-100 btn btn-primary"
+                      type="submit"
                     >
                       Continue to checkout
                     </button>
@@ -281,18 +267,26 @@ const Checkout = () => {
             </div>
           </div>
         </div>
+        <PaymentDialog open={open}/>
+        <PaymentSuccessDialog 
+          open={openSuccess} 
+          setOpen={setOpenSuccess} 
+          amount={Math.round(subtotal + shipping)}
+          phoneNumber={PhoneNumber}
+          UpiID={UpiID}
+          transactionId={transactionId}
+          />
       </>
     );
   };
   return (
     <>
       <Navbar />
-      <div className="container my-3 py-3">
+      <div className="container mt-3 pt-3">
         <h1 className="text-center">Checkout</h1>
         <hr />
         {state.length ? <ShowCheckout /> : <EmptyCart />}
       </div>
-      <Footer />
     </>
   );
 };

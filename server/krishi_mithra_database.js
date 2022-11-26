@@ -123,6 +123,14 @@ class krishi_mithra {
     deleteFromCart({product_id,username},callback){
         this.pool.query(`delete from cart where product_id = '${product_id}' and username = '${username}'`,callback);
     }
+
+    placeOrder({username},callback){
+        this.pool.query(`insert into orders (username,product_id,qty) select username,product_id,qty from cart where username = '${username}'`,callback);
+    }
+
+    checkout({username, Name, PhoneNumber, Address, City, StateAddress, Pincode, PaymentMethod, transactionId,amount},callback){
+        this.pool.query(`CALL checkout('${username}','${Name}','${PhoneNumber}','${Address}','${City}','${StateAddress}',${Pincode},'${PaymentMethod}',${transactionId},${amount})`,callback);
+    }
 }
 
 module.exports = krishi_mithra;

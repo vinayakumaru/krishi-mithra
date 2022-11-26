@@ -77,7 +77,7 @@ function setupProductTable() {
 
 function setupOrderTable() {
     pool.query(
-        "CREATE TABLE IF NOT EXISTS orders (order_id int AUTO_INCREMENT PRIMARY Key, product_id int, price float,product_name varchar(50),category varchar(50),exp_date date,qty int,total_price float,payment_remarks varchar(20))",
+        "CREATE TABLE IF NOT EXISTS orders (order_id PRIAMRY KEY, product_id VARCHAR(20),price INT,exp_date VARCHAR(20),qty INT,payment_id INT,status VARCHAR(20))",
         (err, result) => {
             if (err) throw err;
             console.log("orders table created");

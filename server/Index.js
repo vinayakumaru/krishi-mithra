@@ -121,6 +121,19 @@ app.post("/api/deleteFromCart", (req, res) => {
     });
 });
 
+app.post("/api/checkout", (req, res) => {
+    data = req.body;
+    transactionId = Math.floor(Math.random() * 100000000);
+    krishi_mithra_database_instance.checkout({...data , transactionId}, (err,_) => {
+        if(err){
+            console.log(err);
+            res.status(400).send(err.message);
+            return;
+        }
+        res.send(`${transactionId}`);
+    });
+});
+
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);
     krishi_mithra_database_instance.connect();

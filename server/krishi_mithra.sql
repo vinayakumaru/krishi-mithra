@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 24, 2022 at 09:58 PM
+-- Generation Time: Nov 26, 2022 at 06:29 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -21,6 +21,44 @@ SET time_zone = "+00:00";
 -- Database: `krishi_mithra`
 --
 
+DELIMITER $$
+--
+-- Procedures
+--
+CREATE DEFINER=`root`@`localhost` PROCEDURE `checkout` (IN `username` VARCHAR(20), IN `Name` VARCHAR(20), IN `PhoneNumber` VARCHAR(20), IN `Address` VARCHAR(200), IN `City` VARCHAR(50), IN `StateAddress` VARCHAR(50), IN `Pincode` INT, IN `PaymentMethod` VARCHAR(20), IN `transactionId` INT, IN `amount` INT)   BEGIN
+DECLARE addressId int;
+DECLARE done INT DEFAULT FALSE;
+Declare v1 varchar(20);
+Declare v2 int;
+Declare v3 varchar(20);
+Declare v4 int;
+DECLARE cur CURSOR FOR SELECT product.product_id,product.price,product.exp_date,cart.qty FROM cart JOIN product ON product.product_id = cart.product_id WHERE cart.username = username;
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+SET addressId = FLOOR(RAND()*100000000);
+SET foreign_key_checks = 0;
+
+INSERT INTO address VALUES(addressId,username,Name,PhoneNumber,Address,City,StateAddress,Pincode);
+
+INSERT INTO payment_info(transaction_id,payment_mode,amount,payment_status) VALUES(transactionId,PaymentMethod,amount,"success");
+
+
+
+OPEN cur;
+	read_loop: LOOP
+		FETCH cur INTO v1,v2,v3,v4;
+		IF done THEN
+		LEAVE read_loop;
+        END IF;
+		INSERT INTO orders(product_id, price, exp_date, qty, payment_id, status, addressId) VALUES (v1,v2,v3,v4,transactionId,"pending",addressId);
+    END LOOP;
+CLOSE cur;
+
+SET foreign_key_checks = 1;
+END$$
+
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -28,16 +66,22 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `address` (
-  `cust_id` int(11) NOT NULL,
-  `pincode` int(11) DEFAULT NULL,
-  `address_line1` varchar(50) DEFAULT NULL,
-  `address_line2` varchar(50) DEFAULT NULL,
-  `addressline3` varchar(50) DEFAULT NULL,
-  `city` varchar(20) DEFAULT NULL,
-  `district` varchar(20) DEFAULT NULL,
-  `state` varchar(20) DEFAULT NULL,
-  `phone_num` int(11) DEFAULT NULL
+  `addressId` int(11) NOT NULL,
+  `username` varchar(20) NOT NULL,
+  `name` varchar(20) DEFAULT NULL,
+  `phone` int(11) DEFAULT NULL,
+  `address` varchar(200) DEFAULT NULL,
+  `city` varchar(50) DEFAULT NULL,
+  `state` varchar(50) DEFAULT NULL,
+  `pincode` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `address`
+--
+
+INSERT INTO `address` (`addressId`, `username`, `name`, `phone`, `address`, `city`, `state`, `pincode`) VALUES
+(29064635, 'vinaykumar', 'Vinaya Kumar U', 35325, 'S/O Sharadha Anugraha Devasabettu Chara', 'Hebri', 'Karnataka', 576112);
 
 -- --------------------------------------------------------
 
@@ -72,11 +116,9 @@ CREATE TABLE `cart` (
 --
 
 INSERT INTO `cart` (`cart_id`, `product_id`, `username`, `qty`) VALUES
-(8, 'FUN205', 'vinaykumar', 1),
-(11, 'HER303', 'vinaykumar', 1),
-(29, 'FUN203', 'vinaykumar', 5),
-(31, 'FUN202', 'vinaykumar', 2),
-(33, 'HER302', 'vinaykumar', 3);
+(101, 'HER301', 'vinaykumar', 1),
+(102, 'FUN205', 'vinaykumar', 1),
+(103, 'FUN204', 'vinaykumar', 1);
 
 -- --------------------------------------------------------
 
@@ -98,8 +140,7 @@ CREATE TABLE `customer` (
 --
 
 INSERT INTO `customer` (`cust_id`, `name`, `username`, `password`, `phone_no`, `mail_id`) VALUES
-(1, 'vinay', 'vinaykumar', '123456', 8123345678, 'vinay@gmail.com'),
-(8, 'manoj', 'manoj', '123456', 9876543209, 'manoj@gmail.com');
+(9, 'Vinaya Kumar U', 'vinaykumar', '123456', 8123501022, 'vinaykumaru605@gmail.com');
 
 -- --------------------------------------------------------
 
@@ -144,15 +185,23 @@ CREATE TABLE `invoice_table` (
 
 CREATE TABLE `orders` (
   `order_id` int(11) NOT NULL,
-  `product_id` int(11) DEFAULT NULL,
+  `product_id` varchar(20) DEFAULT NULL,
   `price` float DEFAULT NULL,
-  `product_name` varchar(50) DEFAULT NULL,
-  `category` varchar(50) DEFAULT NULL,
-  `exp_date` date DEFAULT NULL,
+  `exp_date` varchar(20) DEFAULT NULL,
   `qty` int(11) DEFAULT NULL,
-  `total_price` float DEFAULT NULL,
-  `payment_remarks` varchar(20) DEFAULT NULL
+  `payment_id` int(11) NOT NULL,
+  `status` varchar(15) DEFAULT NULL,
+  `addressId` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `orders`
+--
+
+INSERT INTO `orders` (`order_id`, `product_id`, `price`, `exp_date`, `qty`, `payment_id`, `status`, `addressId`) VALUES
+(22, 'HER301', 2300, 'Aug-23', 1, 77106224, 'pending', 29064635),
+(23, 'FUN205', 1500, 'Jul-24', 1, 77106224, 'pending', 29064635),
+(24, 'FUN204', 1659, 'Aug-24', 1, 77106224, 'pending', 29064635);
 
 -- --------------------------------------------------------
 
@@ -162,13 +211,18 @@ CREATE TABLE `orders` (
 
 CREATE TABLE `payment_info` (
   `transaction_id` int(11) NOT NULL,
-  `date_time` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `date_time` timestamp NOT NULL DEFAULT current_timestamp(),
   `payment_mode` varchar(20) DEFAULT NULL,
   `amount` float DEFAULT NULL,
-  `order_id` int(11) DEFAULT NULL,
-  `payment_interface` varchar(20) DEFAULT NULL,
-  `remarks` varchar(20) DEFAULT NULL
+  `payment_status` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `payment_info`
+--
+
+INSERT INTO `payment_info` (`transaction_id`, `date_time`, `payment_mode`, `amount`, `payment_status`) VALUES
+(77106224, '2022-11-26 16:24:44', 'UPI', 5489, 'success');
 
 -- --------------------------------------------------------
 
@@ -224,7 +278,7 @@ INSERT INTO `product` (`product_id`, `product_name`, `category`, `manufacturer`,
 -- Indexes for table `address`
 --
 ALTER TABLE `address`
-  ADD PRIMARY KEY (`cust_id`);
+  ADD PRIMARY KEY (`addressId`);
 
 --
 -- Indexes for table `admin`
@@ -294,13 +348,13 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=104;
 
 --
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
-  MODIFY `cust_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `cust_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `dealer`
@@ -318,13 +372,7 @@ ALTER TABLE `invoice_table`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `payment_info`
---
-ALTER TABLE `payment_info`
-  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
