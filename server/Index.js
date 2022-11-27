@@ -88,7 +88,7 @@ app.post("/api/getProductById", (req, res) => {
     });
 });
 
-app.post('/api/getCart', (req, res) => {
+app.post("/api/getCart", (req, res) => {
     krishi_mithra_database_instance.getCart(req.body, (err, result) => {
         if (err) {
             console.log(err);
@@ -100,8 +100,8 @@ app.post('/api/getCart', (req, res) => {
 });
 
 app.post("/api/updateCart", (req, res) => {
-    krishi_mithra_database_instance.updateCart(req.body, (err,_) => {
-        if(err){
+    krishi_mithra_database_instance.updateCart(req.body, (err, _) => {
+        if (err) {
             console.log(err);
             res.status(400).send(err.message);
             return;
@@ -111,8 +111,8 @@ app.post("/api/updateCart", (req, res) => {
 });
 
 app.post("/api/deleteFromCart", (req, res) => {
-    krishi_mithra_database_instance.deleteFromCart(req.body, (err,_) => {
-        if(err){
+    krishi_mithra_database_instance.deleteFromCart(req.body, (err, _) => {
+        if (err) {
             console.log(err);
             res.status(400).send(err.message);
             return;
@@ -124,13 +124,34 @@ app.post("/api/deleteFromCart", (req, res) => {
 app.post("/api/checkout", (req, res) => {
     data = req.body;
     transactionId = Math.floor(Math.random() * 100000000);
-    krishi_mithra_database_instance.checkout({...data , transactionId}, (err,_) => {
-        if(err){
+    krishi_mithra_database_instance.checkout(
+        { ...data, transactionId },
+        (err, _) => {
+            if (err) {
+                console.log(err);
+                res.status(400).send(err.message);
+                return;
+            }
+            krishi_mithra_database_instance.emptyCart(req.body, (err, _) => {
+                if (err) {
+                    console.log(err);
+                    res.status(400).send(err.message);
+                    return;
+                }
+                res.send(`${transactionId}`);
+            });
+        }
+    );
+});
+
+app.post("/api/getOrders", (req, res) => {
+    krishi_mithra_database_instance.getOrders(req.body, (err, result) => {
+        if (err) {
             console.log(err);
             res.status(400).send(err.message);
             return;
         }
-        res.send(`${transactionId}`);
+        res.send(result);
     });
 });
 

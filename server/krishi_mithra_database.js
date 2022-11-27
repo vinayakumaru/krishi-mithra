@@ -86,20 +86,6 @@ class krishi_mithra {
         );
     }
 
-    getProfile(username, callback) {
-        this.pool.query(
-            `select * from customer where username='${username}'`,
-            (err, result) => {
-                if (err) {
-                    console.log(err);
-                    callback([]);
-                    return;
-                }
-                callback(result);
-            }
-        );
-    }
-
     getProducts(callback) {
         this.pool.query(`select * from product`, callback);
     }
@@ -130,6 +116,14 @@ class krishi_mithra {
 
     checkout({username, Name, PhoneNumber, Address, City, StateAddress, Pincode, PaymentMethod, transactionId,amount},callback){
         this.pool.query(`CALL checkout('${username}','${Name}','${PhoneNumber}','${Address}','${City}','${StateAddress}',${Pincode},'${PaymentMethod}',${transactionId},${amount})`,callback);
+    }
+
+    emptyCart({username},callback){
+        this.pool.query(`delete from cart where username = '${username}'`,callback);
+    }
+    
+    getOrders({username},callback){
+        this.pool.query(`select c.status,product.product_name,product.product_des,product.image,product.product_id,c.price,c.qty from product join (select status,price,qty,product_id from orders join address on orders.addressid = address.addressid where username = '${username}') as c on product.product_id = c.product_id;`,callback);
     }
 }
 
